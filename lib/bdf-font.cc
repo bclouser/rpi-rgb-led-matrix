@@ -28,17 +28,7 @@
 // The little question-mark box "�" for unknown code.
 static const uint32_t kUnicodeReplacementCodepoint = 0xFFFD;
 
-// Bitmap for one row. This limits the number of available columns.
-// Make wider if running into trouble.
-typedef uint64_t rowbitmap_t;
-
 namespace rgb_matrix {
-struct Font::Glyph {
-  int device_width, device_height;
-  int width, height;
-  int x_offset, y_offset;
-  rowbitmap_t bitmap[0];  // contains 'height' elements.
-};
 
 Font::Font() : font_height_(-1), base_line_(0) {}
 Font::~Font() {
@@ -147,7 +137,7 @@ Font *Font::CreateOutlineFont() const {
   return r;
 }
 
-const Font::Glyph *Font::FindGlyph(uint32_t unicode_codepoint) const {
+const Glyph *Font::FindGlyph(uint32_t unicode_codepoint) const {
   CodepointGlyphMap::const_iterator found = glyphs_.find(unicode_codepoint);
   if (found == glyphs_.end())
     return NULL;

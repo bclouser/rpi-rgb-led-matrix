@@ -13,6 +13,16 @@
 #include <stdint.h>
 
 namespace rgb_matrix {
+  // Bitmap for one row. This limits the number of available columns.
+  // Make wider if running into trouble.
+typedef uint64_t rowbitmap_t;
+struct Glyph {
+  int device_width, device_height;
+  int width, height;
+  int x_offset, y_offset;
+  rowbitmap_t bitmap[0];  // contains 'height' elements.
+};
+
 struct Color {
   Color(uint8_t rr, uint8_t gg, uint8_t bb) : r(rr), g(gg), b(bb) {}
   uint8_t r;
@@ -63,14 +73,13 @@ public:
   // in a different color to increase contrast.
   // The ownership of the returned pointer is passed to the caller.
   Font *CreateOutlineFont() const;
+  const Glyph *FindGlyph(uint32_t codepoint) const;
 
 private:
   Font(const Font& x);  // No copy constructor. Use references or pointer instead.
 
-  struct Glyph;
   typedef std::map<uint32_t, Glyph*> CodepointGlyphMap;
 
-  const Glyph *FindGlyph(uint32_t codepoint) const;
 
   int font_height_;
   int base_line_;
